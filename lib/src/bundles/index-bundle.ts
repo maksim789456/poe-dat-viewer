@@ -83,7 +83,7 @@ export function getFileInfo (path: string, bundlesInfo: Uint8Array, filesInfo: U
 
   const structOffset = findSequence(filesInfo, hash)
   if (structOffset === -1) {
-    throw new Error('never')
+    return null;
   }
 
   const filesReader = new DataView(filesInfo.buffer, filesInfo.byteOffset, filesInfo.byteLength)

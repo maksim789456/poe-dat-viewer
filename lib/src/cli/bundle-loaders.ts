@@ -40,6 +40,8 @@ export class FileLoader {
 
   async getFileContents (fullPath: string) {
     const location = getFileInfo(fullPath, this.index.bundlesInfo, this.index.filesInfo)
+    if (!location)
+      return null;
     const bundleBin = await this.fetchBundle(location.bundle)
     return decompressSliceInBundle(new Uint8Array(bundleBin), location.offset, location.size)
   }

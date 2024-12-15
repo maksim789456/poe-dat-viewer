@@ -38,6 +38,8 @@ export async function exportFiles (
     const PARSED_LISTS: SpriteImage[][] = []
     for (const sprite of SPRITE_LISTS) {
       const file = await loader.getFileContents(sprite.path)
+      if (!file)
+        continue;
       PARSED_LISTS.push(parseSpriteIndex(file))
     }
 
@@ -63,6 +65,8 @@ export async function exportFiles (
 
     for (const sprite of bySprite) {
       const ddsFile = await loader.getFileContents(sprite.path)
+      if (!ddsFile)
+        continue;
       for (const image of sprite.images) {
         await imagemagickConvertDDS(ddsFile, image, path.join(outDir, `${image.name.replace(/\//g, '@')}.png`))
       }
@@ -73,16 +77,19 @@ export async function exportFiles (
   {
     const files = config.files.filter(path => !isInsideSprite(path))
     for (const filePath of files) {
+      let file = await loader.getFileContents(filePath);
+      if (!file)
+        continue;
       if (filePath.endsWith('.dds')) {
         await imagemagickConvertDDS(
-          await loader.getFileContents(filePath),
+          file,
           null,
           path.join(outDir, filePath.replace(/\//g, '@').replace(/\.dds$/, '.png'))
         )
       } else {
         await fs.writeFile(
           path.join(outDir, filePath.replace(/\//g, '@')),
-          await loader.getFileContents(filePath)
+          file
         )
       }
     }

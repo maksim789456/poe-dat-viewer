@@ -45,7 +45,10 @@ export async function exportTables (
     loader.clearBundleCache()
     for (const target of config.tables) {
       console.log(`Exporting table "${tr.path}/${target.name}"`)
-      const datFile = readDatFile('.datc64', await loader.getFileContents(`${tr.path}/${target.name}.datc64`))
+      let file = await loader.getFileContents(`${tr.path}/${target.name}.datc64`);
+      if (!file)
+        continue;
+      const datFile = readDatFile('.datc64', file)
       const headers = importHeaders(target.name, datFile, config, schema)
         .filter(hdr => target.columns.includes(hdr.name))
 
